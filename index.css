@@ -1,0 +1,59 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #345;
+  color: white;
+}
+
+.总容器 {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(800px, 100vw);
+  height: max(800px, 100vh);
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+}
+
+#游戏画布 {
+  height: min(100%, 1600px);
+  aspect-ratio: 1;
+  /* box-shadow: inset 0 0 0 1px lightgreen; */
+}
+
+#面板区 {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.按钮 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  width: 120px;
+  height: 60px;
+  background-color: #174;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+.按钮:hover {
+  cursor: pointer;
+}
+
+.按钮:active {
+  background-color: #396;
+}

@@ -1,0 +1,12 @@
+.env
+.DS_Store
+**/.idea/
+**/.vscode/
+**/.VSCodeCounter/
+**/.github/
+**/.shared/
+**/.vs/
+**/.venv/
+**/.cursor/
+**/.codeartsdoer/
+**/.trae/
