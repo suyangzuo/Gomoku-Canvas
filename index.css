@@ -26,6 +26,7 @@ body {
 #游戏画布 {
   height: min(100%, 1600px);
   aspect-ratio: 1;
+  translate: 0 15px;
   /* box-shadow: inset 0 0 0 1px lightgreen; */
 }
 

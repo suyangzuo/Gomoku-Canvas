@@ -51,7 +51,7 @@ class 五子棋 {
       },
     };
     this.悬停索引背景圆半径 = 22;
-    this.索引与棋盘距离 = 60;
+    this.索引与棋盘距离 = 80;
     this.棋盘索引字体 = `${14 * this.dpr}px 'Google Sans Code', Consolas, 'Noto Sans SC', 微软雅黑, sans-serif`;
     this.棋盘悬停索引字体 = `550 ${14 * this.dpr}px 'Google Sans Code', Consolas, 'Noto Sans SC', 微软雅黑, sans-serif`;
     this.游玩中 = false;
@@ -65,10 +65,11 @@ class 五子棋 {
       列: null,
     };
     this.经纬线数量 = 19;
-    this.棋盘内边距 = 100;
+    this.棋盘内边距 = 120;
     this.经纬线坐标 = [];
     this.棋盘格数据 = [];
     this.对弈记录 = [];
+    this.防抖计时器 = null;
   }
 
   清空画布() {
@@ -77,18 +78,28 @@ class 五子棋 {
 
   添加观察器() {
     const 回调 = () => {
-      this.画布.width = this.画布.offsetWidth * this.dpr;
-      this.画布.height = this.画布.offsetHeight * this.dpr;
-      this.刷新边界矩形();
-      this.刷新棋盘数据();
-      if (this.游玩中) {
-        for (const 记录 of this.对弈记录) {
-          this.绘制棋子({
-            行: 记录.行,
-            列: 记录.列,
-          });
+      clearTimeout(this.防抖计时器);
+      this.防抖计时器 = setTimeout(() => {
+        this.画布.width = this.画布.offsetWidth * this.dpr;
+        this.画布.height = this.画布.offsetHeight * this.dpr;
+        this.刷新边界矩形();
+        this.刷新棋盘数据();
+        if (this.游玩中) {
+          for (const [index, 记录] of this.对弈记录.entries()) {
+            this.绘制棋子({
+              行: 记录.行,
+              列: 记录.列,
+            });
+            this.绘制棋子序号(
+              {
+                行: 记录.行,
+                列: 记录.列,
+              },
+              index + 1,
+            );
+          }
         }
-      }
+      }, 50);
     };
     this.视口尺寸观察器 = new ResizeObserver(回调);
     this.视口尺寸观察器.observe(document.body);
@@ -135,7 +146,7 @@ class 五子棋 {
       this.绘制棋子(this.当前悬停格索引);
       this.当前落子色 = this.当前落子色 === "黑" ? "白" : "黑";
       this.保存对弈记录(this.当前悬停格索引);
-      this.绘制棋子序号(this.当前悬停格索引);
+      this.绘制棋子序号(this.当前悬停格索引, this.对弈记录.length);
     });
 
     window.addEventListener("scroll", () => {
@@ -408,7 +419,7 @@ class 五子棋 {
       列: this.经纬线坐标[悬停格索引.列],
     };
     const 落子索引 = this.从行列获取棋盘格索引(悬停格索引);
-    this.上下文.drawImage(
+    /* this.上下文.drawImage(
       this.棋子图,
       this.棋盘格数据[落子索引].落子 === "黑" ? this.黑子范围.x : this.白子范围.x,
       this.棋盘格数据[落子索引].落子 === "黑" ? this.黑子范围.y : this.白子范围.y,
@@ -418,16 +429,16 @@ class 五子棋 {
       坐标.行 - this.棋子半径,
       this.棋子半径 * 2,
       this.棋子半径 * 2,
-    );
-    /* this.上下文.fillStyle = this.棋盘格数据[落子索引].落子 === "黑" ? "#000" : "#fff";
+    ); */
+    this.上下文.fillStyle = this.棋盘格数据[落子索引].落子 === "黑" ? "#000" : "#fff";
     this.上下文.beginPath();
     this.上下文.arc(坐标.列, 坐标.行, this.棋子半径, 0, Math.PI * 2);
     this.上下文.closePath();
-    this.上下文.fill(); */
+    this.上下文.fill();
     this.上下文.restore();
   }
 
-  绘制棋子序号(行列索引) {
+  绘制棋子序号(行列索引, 序号) {
     this.上下文.save();
     this.上下文.font = `${14 * this.dpr}px 'Google Sans Code', 'Consolas', monospace`;
     this.上下文.textAlign = "center";
@@ -436,7 +447,7 @@ class 五子棋 {
     const x = this.经纬线坐标[行列索引.列];
     const y = this.经纬线坐标[行列索引.行];
     this.上下文.fillStyle = this.棋盘格数据[落子索引].落子 === "黑" ? "#fff" : "#000";
-    this.上下文.fillText(this.对弈记录.length, x, y);
+    this.上下文.fillText(序号, x, y);
     this.上下文.restore();
   }
 
